@@ -11,7 +11,7 @@
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <mvc:annotation-driven/>
     <mvc:default-servlet-handler/>
-    <context:component-scan base-package="cn.rongcloud.im.migrate"/>
+    <context:component-scan base-package="cn.rongcloud.im.adapter"/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/"/>

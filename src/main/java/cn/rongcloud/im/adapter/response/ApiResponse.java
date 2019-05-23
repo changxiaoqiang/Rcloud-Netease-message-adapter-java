@@ -1,7 +1,9 @@
-package cn.rongcloud.im.migrate.response;
+package cn.rongcloud.im.adapter.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {
     private static Gson gson = new Gson();
 
