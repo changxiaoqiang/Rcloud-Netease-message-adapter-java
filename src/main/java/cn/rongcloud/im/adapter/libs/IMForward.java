@@ -3,6 +3,7 @@ package cn.rongcloud.im.adapter.libs;
 import cn.rongcloud.im.adapter.libs.neteaseSDK.NeteaseSDK;
 import cn.rongcloud.im.adapter.libs.neteaseSDK.messages.Message;
 import cn.rongcloud.im.adapter.libs.neteaseSDK.messages.TextMessage;
+import cn.rongcloud.im.adapter.libs.neteaseSDK.models.Conversation;
 import cn.rongcloud.im.adapter.libs.neteaseSDK.util.ConversationType;
 import cn.rongcloud.im.adapter.libs.neteaseSDK.util.NeteaseApiResponse;
 import com.google.gson.Gson;
@@ -77,6 +78,9 @@ public class IMForward {
         switch (routeMsg.getChannelType()) {
             case "PERSON":
                 netMsg.setOpe(ConversationType.PRIVATE.getCode());
+                break;
+            case "GROUP":
+                netMsg.setOpe(ConversationType.GROUP.getCode());
                 break;
         }
         responseResult = neteaseSDK.sendMessage(netMsg);
