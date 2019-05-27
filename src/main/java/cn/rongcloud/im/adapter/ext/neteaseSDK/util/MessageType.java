@@ -1,4 +1,4 @@
-package cn.rongcloud.im.adapter.libs.neteaseSDK.util;
+package cn.rongcloud.im.adapter.ext.neteaseSDK.util;
 
 public enum MessageType {
     TEXT(0, "文本消息"),  PIC(1, "图片消息"),  VOICE(2, "语音消息"), VIDEO(3, "视频消息"),  LOC(4, "地理位置消息"), FILE(6, "文件消息");

@@ -1,4 +1,4 @@
-package cn.rongcloud.im.adapter.libs;
+package cn.rongcloud.im.adapter.ext;
 
 public class RcloudRouteMsgBean {
     private String fromUserId;

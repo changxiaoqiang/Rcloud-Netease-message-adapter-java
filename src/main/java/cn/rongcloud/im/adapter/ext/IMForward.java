@@ -1,11 +1,12 @@
-package cn.rongcloud.im.adapter.libs;
+package cn.rongcloud.im.adapter.ext;
 
-import cn.rongcloud.im.adapter.libs.neteaseSDK.NeteaseSDK;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.messages.Message;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.messages.TextMessage;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.models.Conversation;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.util.ConversationType;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.util.NeteaseApiResponse;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.NeteaseSDK;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.TextMessage;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.models.Conversation;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.models.GroupConversation;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.models.PrivateConversation;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import com.google.gson.Gson;
 import io.rong.RongCloud;
 import io.rong.messages.BaseMessage;
@@ -67,23 +68,24 @@ public class IMForward {
         String content = routeMsg.getContent();
 
         Message netMsg = null;
+        Conversation conversation = null;
 
         switch(routeMsg.getObjectName()) {
             case "RC:TxtMsg":
                 message = gson.fromJson(content, TxtMessage.class);
-                netMsg = new TextMessage(fromUserId, toUserId, ((TxtMessage) message).getContent());
+                netMsg = new TextMessage( ((TxtMessage) message).getContent());
                 break;
         }
 
         switch (routeMsg.getChannelType()) {
             case "PERSON":
-                netMsg.setOpe(ConversationType.PRIVATE.getCode());
+                conversation = new PrivateConversation(fromUserId, toUserId);
                 break;
             case "GROUP":
-                netMsg.setOpe(ConversationType.GROUP.getCode());
+                conversation = new GroupConversation(fromUserId, toUserId);
                 break;
         }
-        responseResult = neteaseSDK.sendMessage(netMsg);
+        responseResult = neteaseSDK.sendMessage(conversation, netMsg);
         return responseResult;
     }
 }

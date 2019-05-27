@@ -1,16 +1,14 @@
-package cn.rongcloud.im.adapter.libs.neteaseSDK.messages;
+package cn.rongcloud.im.adapter.ext.neteaseSDK.models;
 
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import com.google.gson.Gson;
 
-import java.util.HashMap;
-
-public abstract class Message {
+public abstract class Conversation {
     private final static Gson gson = new Gson();
     protected String from;
-    protected int ope;
     protected String to;
-    protected int type;
-    protected HashMap<String, Object> body = new HashMap<>();
+    protected int ope;
 
     public String getFrom() {
         return from;
@@ -36,21 +34,7 @@ public abstract class Message {
         this.to = to;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public HashMap<String, Object> getBody() {
-        return body;
-    }
-
-    public void setBody(HashMap<String, Object> body) {
-        this.body = body;
-    }
+    public abstract NeteaseApiResponse send(Message message);
 
     @Override
     public String toString() {

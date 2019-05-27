@@ -1,4 +1,4 @@
-package cn.rongcloud.im.adapter.libs.neteaseSDK.util;
+package cn.rongcloud.im.adapter.ext.neteaseSDK.util;
 
 import java.util.HashMap;
 
@@ -14,6 +14,11 @@ public class NeteaseApiResponse {
     public NeteaseApiResponse(int code, HashMap<String, Object> data) {
         this.code = code;
         this.data = data;
+    }
+
+    public NeteaseApiResponse(int code, String desc) {
+        this.code = code;
+        this.desc = desc;
     }
 
     public int getCode() {

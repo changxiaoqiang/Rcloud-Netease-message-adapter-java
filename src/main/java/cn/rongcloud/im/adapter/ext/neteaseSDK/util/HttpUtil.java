@@ -1,7 +1,9 @@
-package cn.rongcloud.im.adapter.libs.neteaseSDK.util;
+package cn.rongcloud.im.adapter.ext.neteaseSDK.util;
 
-import cn.rongcloud.im.adapter.libs.neteaseSDK.messages.Message;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.models.Conversation;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.net.ssl.*;
 import java.io.ByteArrayOutputStream;
@@ -80,10 +82,29 @@ public class HttpUtil {
         return conn;
     }
 
-    public static void setBodyParameter(Object obj, HttpURLConnection conn) throws Exception {
-        String params = getParams(obj);
-        System.out.println(params);
-        setBodyParameter(params, conn);
+    public static void setBodyParameter(HttpURLConnection conn, Object... objs) throws Exception {
+        StringBuilder params = new StringBuilder();
+
+        for (Object obj : objs) {
+            if (obj instanceof Message) {
+                params.append("type=").append(((Message) obj).getType()).append("&");
+                params.append("body=").append(obj.toString()).append("&");
+                continue;
+            }
+            if (null != obj) {
+                String str = getParams(obj);
+                if (!StringUtils.isEmpty(str)) {
+                    params.append(str).append("&");
+                }
+            }
+        }
+
+        String paramStr = "";
+        if (params.length() > 0) {
+            paramStr = params.substring(0, params.length() - 1);
+        }
+        System.out.println(paramStr);
+        setBodyParameter(paramStr, conn);
     }
 
     public static void setBodyParameter(String str, HttpURLConnection conn) throws IOException {
@@ -158,7 +179,7 @@ public class HttpUtil {
         List<Field> fields = new ArrayList<>();
         Class tmpClass = clazz.getClass();
 
-        while (tmpClass != null && Message.class.isAssignableFrom(tmpClass)) {
+        while (tmpClass != null && (Message.class.isAssignableFrom(tmpClass) || Conversation.class.isAssignableFrom(tmpClass))) {
             fields.addAll(Arrays.asList(tmpClass.getDeclaredFields()));
             tmpClass = tmpClass.getSuperclass();
         }

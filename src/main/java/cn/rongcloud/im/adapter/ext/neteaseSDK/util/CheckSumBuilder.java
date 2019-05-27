@@ -1,4 +1,4 @@
-package cn.rongcloud.im.adapter.libs.neteaseSDK.util;
+package cn.rongcloud.im.adapter.ext.neteaseSDK.util;
 
 import java.security.MessageDigest;
 

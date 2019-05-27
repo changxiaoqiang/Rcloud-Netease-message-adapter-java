@@ -1,6 +1,6 @@
 package cn.rongcloud.im.adapter.utils;
 
-import cn.rongcloud.im.adapter.libs.neteaseSDK.util.CheckSumBuilder;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.util.CheckSumBuilder;
 import io.rong.util.CodeUtil;
 
 import javax.servlet.http.HttpServletRequest;

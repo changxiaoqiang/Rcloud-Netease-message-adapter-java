@@ -1,7 +1,7 @@
 package cn.rongcloud.im.adapter.controller;
 
-import cn.rongcloud.im.adapter.libs.IMForward;
-import cn.rongcloud.im.adapter.libs.neteaseSDK.util.NeteaseApiResponse;
+import cn.rongcloud.im.adapter.ext.IMForward;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import cn.rongcloud.im.adapter.response.ApiResponse;
 import cn.rongcloud.im.adapter.utils.VerifyRequest;
 import com.google.gson.Gson;
