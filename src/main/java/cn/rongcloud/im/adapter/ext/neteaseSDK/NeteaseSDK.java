@@ -43,7 +43,7 @@ public class NeteaseSDK {
     }
 
     public static void main(String[] args) throws Exception {
-        NeteaseSDK neteaseSDK = NeteaseSDK.getInstance("6c426ee5ee2c200487026ade32f4e276", "650689c387cb");
+        NeteaseSDK neteaseSDK = NeteaseSDK.getInstance("", "");
         URL picUrl = new URL("https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F111.png");
         URLConnection conn = picUrl.openConnection();
         int size = conn.getContentLength();
