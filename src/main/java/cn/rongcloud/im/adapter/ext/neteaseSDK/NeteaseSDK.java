@@ -1,8 +1,9 @@
 package cn.rongcloud.im.adapter.ext.neteaseSDK;
 
-import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
-import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.PicMessage;
-import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.TextMessage;
+import cn.rongcloud.im.adapter.ext.IMForward.Beans.ImgBean;
+import cn.rongcloud.im.adapter.ext.IMForward.utils.FileUtil;
+import cn.rongcloud.im.adapter.ext.IMForward.utils.ImgUtil;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.*;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.models.Conversation;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.models.PrivateConversation;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
@@ -11,9 +12,12 @@ import cn.rongcloud.im.adapter.ext.neteaseSDK.util.HttpUtil;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NeteaseSDK {
@@ -44,28 +48,28 @@ public class NeteaseSDK {
 
     public static void main(String[] args) throws Exception {
         NeteaseSDK neteaseSDK = NeteaseSDK.getInstance("", "");
-        URL picUrl = new URL("https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F111.png");
-        URLConnection conn = picUrl.openConnection();
-        int size = conn.getContentLength();
-
-        InputStream input = conn.getInputStream();
-        System.out.println(size);
-
-        ImageIO.read(input);
-
-        BufferedImage image = ImageIO.read(picUrl);
-        System.out.println(image.getHeight());
-        System.out.println(image.getWidth());
-        System.out.println(image.getType());
-        System.out.println(size);
-        input.close();
+        // 验证云信并没有验证文件 MD5 应该是在客户端验证，如果客户端没做这个验证的可以忽略 MD5 计算
+        // 文件属性也是在客户端使用的，客户端处理没问题的话，可以忽略提取属性
+        String picUrl = "https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F111.png";
+        String videoUrl = "http://nimtest.nos.netease.com/21f34447-e9ac-4871-91ad-d9f03af20412";
+        ImgBean imgBean = ImgUtil.getImgBean(picUrl);
 
         Message txtMsg = new TextMessage("哈哈");
 
-        PicMessage picMessage = new PicMessage("图片", "", picUrl.toString(), "png", image.getWidth(), image.getHeight(), size);
+        PicMessage picMessage = new PicMessage("图片", imgBean.getMd5(), picUrl, imgBean.getExt(), imgBean.getW(), imgBean.getH(), imgBean.getSize());
+
+
+        URLConnection conn = new URL(videoUrl).openConnection();
+        InputStream input = conn.getInputStream();
+
+        VideoMessage videoMessage = new VideoMessage(5, FileUtil.getMD5(input), videoUrl, 100, 200, conn.getContentLength());
+
+        LBSMessage lbsMessage = new LBSMessage("天安门", 39.542637, 116.232922);
+
+        FileMessage fileMessage = new FileMessage("file.txt", FileUtil.getMD5(input),"http://nimtest.nos.netease.com/21f34447-e9ac-4871-91ad-d9f03af20412", "mp4", conn.getContentLength());
 
         Conversation priConversation = new PrivateConversation("1", "2");
-        System.out.println(neteaseSDK.sendMessage(priConversation, picMessage).getCode());
+        System.out.println(neteaseSDK.sendMessage(priConversation, fileMessage));
     }
 
 }

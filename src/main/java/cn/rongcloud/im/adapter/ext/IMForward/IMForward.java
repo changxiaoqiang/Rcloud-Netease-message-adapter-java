@@ -1,7 +1,10 @@
-package cn.rongcloud.im.adapter.ext;
+package cn.rongcloud.im.adapter.ext.IMForward;
 
+import cn.rongcloud.im.adapter.ext.IMForward.Beans.NeteaseRouteMsgBean;
+import cn.rongcloud.im.adapter.ext.IMForward.Beans.RcloudRouteMsgBean;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.NeteaseSDK;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.PicMessage;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.TextMessage;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.models.Conversation;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.models.GroupConversation;
@@ -10,6 +13,7 @@ import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import com.google.gson.Gson;
 import io.rong.RongCloud;
 import io.rong.messages.BaseMessage;
+import io.rong.messages.ImgMessage;
 import io.rong.messages.TxtMessage;
 import io.rong.models.message.MessageModel;
 import io.rong.models.message.PrivateMessage;
@@ -61,19 +65,24 @@ public class IMForward {
         routeMsg.setObjectName(request.getParameter("objectName"));
 
         NeteaseSDK neteaseSDK = new NeteaseSDK(neteaseKey, neteaseSecret);
-        BaseMessage message = null;
+        BaseMessage rcloudMsg = null;
         NeteaseApiResponse responseResult = null;
         String fromUserId = routeMsg.getFromUserId();
         String toUserId = routeMsg.getToUserId();
         String content = routeMsg.getContent();
 
-        Message netMsg = null;
+        Message neteaseMsg = null;
         Conversation conversation = null;
 
         switch(routeMsg.getObjectName()) {
             case "RC:TxtMsg":
-                message = gson.fromJson(content, TxtMessage.class);
-                netMsg = new TextMessage( ((TxtMessage) message).getContent());
+                rcloudMsg = gson.fromJson(content, TxtMessage.class);
+                neteaseMsg = new TextMessage( ((TxtMessage) rcloudMsg).getContent());
+                break;
+            case "RC:ImgMsg":
+                rcloudMsg = gson.fromJson(content, ImgMessage.class);
+                String imgUrl = ((ImgMessage) rcloudMsg).getImageUri();
+                neteaseMsg = new PicMessage("图片消息", "", imgUrl, "png", 10, 10, 123);
                 break;
         }
 
@@ -85,7 +94,7 @@ public class IMForward {
                 conversation = new GroupConversation(fromUserId, toUserId);
                 break;
         }
-        responseResult = neteaseSDK.sendMessage(conversation, netMsg);
+        responseResult = neteaseSDK.sendMessage(conversation, neteaseMsg);
         return responseResult;
     }
 }

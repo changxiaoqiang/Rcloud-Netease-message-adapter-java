@@ -1,11 +1,16 @@
 package cn.rongcloud.im.adapter.ext.neteaseSDK.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.Gson;
+
 import java.util.HashMap;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NeteaseApiResponse {
+    private final static Gson gson = new Gson();
     private int code;
     private HashMap<String, Object> data;
-    private String desc;
+    private String msg;
 
     public NeteaseApiResponse(int code) {
         this.code = code;
@@ -16,9 +21,9 @@ public class NeteaseApiResponse {
         this.data = data;
     }
 
-    public NeteaseApiResponse(int code, String desc) {
+    public NeteaseApiResponse(int code, String msg) {
         this.code = code;
-        this.desc = desc;
+        this.msg = msg;
     }
 
     public int getCode() {
@@ -29,12 +34,12 @@ public class NeteaseApiResponse {
         this.code = code;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public HashMap<String, Object> getData() {
@@ -43,5 +48,10 @@ public class NeteaseApiResponse {
 
     public void setData(HashMap<String, Object> data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return gson.toJson(this);
     }
 }

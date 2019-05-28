@@ -1,4 +1,4 @@
-package cn.rongcloud.im.adapter.ext;
+package cn.rongcloud.im.adapter.ext.IMForward.Beans;
 
 public class NeteaseRouteMsgBean {
     private String eventType;
