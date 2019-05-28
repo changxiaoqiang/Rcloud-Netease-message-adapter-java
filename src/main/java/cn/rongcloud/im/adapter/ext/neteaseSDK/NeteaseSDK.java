@@ -9,15 +9,10 @@ import cn.rongcloud.im.adapter.ext.neteaseSDK.models.PrivateConversation;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.util.HttpUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.MessageDigest;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NeteaseSDK {
@@ -64,7 +59,7 @@ public class NeteaseSDK {
 
         VideoMessage videoMessage = new VideoMessage(5, FileUtil.getMD5(input), videoUrl, 100, 200, conn.getContentLength());
 
-        LBSMessage lbsMessage = new LBSMessage("天安门", 39.542637, 116.232922);
+        LocMessage locMessage = new LocMessage("天安门", 39.542637, 116.232922);
 
         FileMessage fileMessage = new FileMessage("file.txt", FileUtil.getMD5(input),"http://nimtest.nos.netease.com/21f34447-e9ac-4871-91ad-d9f03af20412", "mp4", conn.getContentLength());
 

@@ -4,7 +4,6 @@ import cn.rongcloud.im.adapter.ext.IMForward.IMForward;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.util.NeteaseApiResponse;
 import cn.rongcloud.im.adapter.response.ApiResponse;
 import cn.rongcloud.im.adapter.utils.VerifyRequest;
-import com.google.gson.Gson;
 import io.rong.models.response.ResponseResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +17,6 @@ import java.io.IOException;
 @RequestMapping("/index")
 @RestController
 public class IndexController {
-    private static final Gson gson = new Gson();
-
     private final String NeteaseKey = "";
     private final String NeteaseSecret = "";
 
@@ -41,9 +38,9 @@ public class IndexController {
         String rcloudKey = request.getParameter("appKey");
 
         if (!StringUtils.isEmpty(rcloudKey)) {
-            response = this.rcloud(request);
+            response = this.rcloudToNetease(request);
         } else {
-            response = this.yunxin(request);
+            response = this.neteaseToRcloud(request);
         }
 
         return response;
@@ -55,7 +52,7 @@ public class IndexController {
      * @param request
      * @throws Exception
      */
-    private ApiResponse yunxin(HttpServletRequest request) throws Exception {
+    private ApiResponse neteaseToRcloud(HttpServletRequest request) throws Exception {
         ApiResponse response = new ApiResponse(200);
         String appKey = request.getHeader("AppKey");
         //TODO 根据 appKey 获取 secret，处理多应用场景
@@ -67,8 +64,7 @@ public class IndexController {
         if (body == null) {
             response.setCode(403);
             System.out.println(response);
-            //TODO  api 文档上请求签名错误，先忽略
-//            return response;
+            return response;
         }
 
         Boolean verify = VerifyRequest.verifyNetease(request, NeteaseSecret, reqBody);
@@ -91,15 +87,14 @@ public class IndexController {
      * @param request
      * @throws Exception
      */
-    private ApiResponse rcloud(HttpServletRequest request) throws Exception {
+    private ApiResponse rcloudToNetease(HttpServletRequest request) throws Exception {
         ApiResponse response = new ApiResponse(200);
 
         String appKey = request.getParameter("appKey");
         Boolean verify = VerifyRequest.verifyRcloud(request, RcloudSecret);
         if (!verify) {
             response.setCode(403);
-            System.out.println(response);
-//            return response;
+            return response;
         }
         //TODO 根据 appKey 获取 secret，处理多应用场景
 

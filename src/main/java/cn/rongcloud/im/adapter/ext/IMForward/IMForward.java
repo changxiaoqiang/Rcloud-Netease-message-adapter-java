@@ -1,8 +1,11 @@
 package cn.rongcloud.im.adapter.ext.IMForward;
 
+import cn.rongcloud.im.adapter.ext.IMForward.Beans.ImgBean;
 import cn.rongcloud.im.adapter.ext.IMForward.Beans.NeteaseRouteMsgBean;
 import cn.rongcloud.im.adapter.ext.IMForward.Beans.RcloudRouteMsgBean;
+import cn.rongcloud.im.adapter.ext.IMForward.utils.ImgUtil;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.NeteaseSDK;
+import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.LocMessage;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.Message;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.PicMessage;
 import cn.rongcloud.im.adapter.ext.neteaseSDK.messages.TextMessage;
@@ -14,7 +17,9 @@ import com.google.gson.Gson;
 import io.rong.RongCloud;
 import io.rong.messages.BaseMessage;
 import io.rong.messages.ImgMessage;
+import io.rong.messages.LBSMessage;
 import io.rong.messages.TxtMessage;
+import io.rong.models.message.GroupMessage;
 import io.rong.models.message.MessageModel;
 import io.rong.models.message.PrivateMessage;
 import io.rong.models.response.ResponseResult;
@@ -33,22 +38,44 @@ public class IMForward {
         String convType = routeMsg.getConvType();
         String msgType = routeMsg.getMsgType();
         BaseMessage message = null;
+        Message neteaseMsg = null;
 
         ResponseResult responseResult = null;
         switch (msgType) {
+            default:
             case "TEXT":
                 message = new TxtMessage(routeMsg.getBody(), routeMsg.getAttach());
                 break;
+            case "PICTURE":
+                neteaseMsg = gson.fromJson(routeMsg.getAttach(), PicMessage.class);
+                message = new ImgMessage("", "", ((PicMessage) neteaseMsg).getUrl());
+                break;
+            case "LOCATION":
+                neteaseMsg = gson.fromJson(routeMsg.getAttach(), LocMessage.class);
+                message = new LBSMessage("", "", ((LocMessage) neteaseMsg).getLat(), ((LocMessage) neteaseMsg).getLng(), ((LocMessage) neteaseMsg).getTitle());
+                break;
+
         }
+        MessageModel conv = null;
         switch (convType) {
+            default:
             case "PERSON":
-                MessageModel conv = new PrivateMessage();
+                conv = new PrivateMessage();
                 conv.setSenderId(fromUser);
                 conv.setTargetId(new String[]{toUser});
                 conv.setContent(message);
                 conv.setObjectName(message.getType());
                 responseResult = rongCloud.message.msgPrivate.send((PrivateMessage) conv);
                 break;
+            case "GROUP":
+                conv = new GroupMessage();
+                conv.setSenderId(fromUser);
+                conv.setTargetId(new String[]{toUser});
+                conv.setContent(message);
+                conv.setObjectName(message.getType());
+                responseResult = rongCloud.message.group.send((GroupMessage) conv);
+                break;
+
         }
         return responseResult;
     }
@@ -74,19 +101,27 @@ public class IMForward {
         Message neteaseMsg = null;
         Conversation conversation = null;
 
-        switch(routeMsg.getObjectName()) {
+        switch (routeMsg.getObjectName()) {
+            default:
             case "RC:TxtMsg":
                 rcloudMsg = gson.fromJson(content, TxtMessage.class);
-                neteaseMsg = new TextMessage( ((TxtMessage) rcloudMsg).getContent());
+                neteaseMsg = new TextMessage(((TxtMessage) rcloudMsg).getContent());
                 break;
             case "RC:ImgMsg":
                 rcloudMsg = gson.fromJson(content, ImgMessage.class);
                 String imgUrl = ((ImgMessage) rcloudMsg).getImageUri();
-                neteaseMsg = new PicMessage("图片消息", "", imgUrl, "png", 10, 10, 123);
+                ImgBean imgBean = ImgUtil.getImgBean(imgUrl);
+                neteaseMsg = new PicMessage("图片消息", imgBean.getMd5(), imgUrl, imgBean.getExt(), imgBean.getW(), imgBean.getH(), imgBean.getSize());
+                break;
+            case "RC:LBSMsg":
+                rcloudMsg = gson.fromJson(content, LBSMessage.class);
+                LBSMessage rLBSMessage = (LBSMessage) rcloudMsg;
+                neteaseMsg = new LocMessage(rLBSMessage.getPoi(), rLBSMessage.getLatitude(), rLBSMessage.getLongitude());
                 break;
         }
 
         switch (routeMsg.getChannelType()) {
+            default:
             case "PERSON":
                 conversation = new PrivateConversation(fromUserId, toUserId);
                 break;

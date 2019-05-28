@@ -2,12 +2,12 @@ package cn.rongcloud.im.adapter.ext.neteaseSDK.messages;
 
 import cn.rongcloud.im.adapter.ext.neteaseSDK.util.MessageType;
 
-public class LBSMessage extends Message {
+public class LocMessage extends Message {
     private String title;
     private double lng;
     private double lat;
 
-    public LBSMessage(String title, double lat, double lng) {
+    public LocMessage(String title, double lat, double lng) {
         this.type = MessageType.LBS.getCode();
         this.title = title;
         this.lng = lng;
